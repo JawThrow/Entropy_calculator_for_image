@@ -1,10 +1,17 @@
 cc=gcc
 CFLAGS=-g -Wall
-OBJS=./obj/entropy_calculator_for_image_main.o
-TARGET=../bin/entropy_calculator
+OBJS=entropy_calculator_for_image_main.o
+OBJDIR=./obj
+BINDIR=../bin
+TARGET=entropy_calculator
 
-$(TARGET): $(OBJS)	$(CC) -o $@ $(OBJS)
 
-all: $(TARGET)
+$(OBJDIR)/%.o: %.c
+	$(CC) -o $(OBJDIR)/$@ %.c
 
-clean:	rm $(OBJS) $(TARGET)
+$(TARGET): $(OBJS)
+	$(CC) -o $@ $(OBJS)
+
+clean:
+	rm -f *.o
+	rm -f $(TARGET)
