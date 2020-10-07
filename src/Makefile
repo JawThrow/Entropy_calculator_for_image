@@ -1,18 +1,29 @@
 cc=gcc
 CFLAGS=-g -Wall
+# object file top path
 OBJDIR=./obj
+# object files
 OBJS=entropy_calculator_for_image_main.o
+
+# source top path
 SRCDIR=.
+
+# bin path
 BINDIR=../bin
-TARGET=entropy_calculator
+TARGET=$(BINDIR)/entropy_calculator
 
+vpath %.o $(addprefix $(OBJDIR)/, $(OBJS))
+vpath %.c $(SRCDIR)
+vpath %.h $(SRCDIR)
 
-$(OBJDIR)/$(OBJS): $(SRCDIR)/*.c
-	$(CC) -o $@ $<
+all: $(TARGET)
 
-$(BINDIR)/$(TARGET): $(OBJDIR)/$(OBJS)
-	$(CC) -c -o $@ $<
+$(TARGET): $(OBJDIR)/$(OBJS)
+	$(CC) -o $@ $^
+
+$(OBJDIR)/%.o : $(SRCDIR)/%.c
+	$(CC) -c -o $@ $^
 
 clean:
-	rm -f $(OBJDIR)/*.o
-	rm -f $(BINDIR)/$(TARGET)
+	rm -f $(OBJDIR)/$(OBJS)
+	rm -f $(TARGET)
