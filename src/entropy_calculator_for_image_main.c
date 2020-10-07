@@ -1,7 +1,13 @@
-#include <stdio.h>
+#include "common.h"
 
 int main(int argc, char* argv[])
 {
-    printf("first commit!\n");
+    // image loading
+    // command line parameter process
+    // partitioning
+    // transform
+    // quantization
+    // something statistical
+
     return 0;
 }

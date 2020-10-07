@@ -3,7 +3,7 @@ CFLAGS=-g -Wall
 # object file top path
 OBJDIR=./obj
 # object files
-OBJS=entropy_calculator_for_image_main.o
+OBJS=entropy_calculator_for_image_main.o common.o
 
 # source top path
 SRCDIR=.
