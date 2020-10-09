@@ -2,8 +2,8 @@
 
 int main(int argc, char* argv[])
 {
+    // command loading
     // image loading
-    // command line parameter process
     // partitioning
     // transform
     // quantization
