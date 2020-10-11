@@ -71,6 +71,93 @@ static int alloc_image_mem(int width, int height, int nframes, int ntype)
     return SUCCESS;
 }
 
+static int load_YUV()
+{
+    icC.YCbCr.nframe = nframe;
+	icC.YCbCr.width  = width;
+	icC.YCbCr.height = height;
+
+	/*char CIF_path[256] = "..\\CIF(352x288)";	
+	char CIF_fname[256];*/
+	
+	char CIF_path[256] = "data";
+	char CIF_fname[256];
+
+	sprintf(CIF_fname, "%s\\%s", CIF_path, fname);
+
+	FILE* input_fp;
+	input_fp = fopen(CIF_fname, "rb");
+	if(input_fp==NULL)
+	{
+		cout << "fail to load cif.yuv" << endl;
+		return -1;
+	}
+
+	icC.YCbCr.Ys  = (unsigned char*) malloc(sizeof(unsigned char)*width*height*nframe);
+	icC.YCbCr.Cbs = (unsigned char*) malloc(sizeof(unsigned char)*(width/2)*(height/2)*nframe);
+	icC.YCbCr.Crs = (unsigned char*) malloc(sizeof(unsigned char)*(width/2)*(height/2)*nframe);
+
+	if(icC.YCbCr.Ys == NULL || icC.YCbCr.Cbs == NULL || icC.YCbCr.Crs == NULL)
+	{
+		cout << "fail to malloc Ys, Cbs, Crs" << endl;
+		return -1;
+	}
+
+	for(int i=0; i<nframe; i++)
+	{
+		fread(&icC.YCbCr.Ys[i*width*height], sizeof(unsigned char)*height*width, 1, input_fp);
+		fread(&icC.YCbCr.Cbs[i*(width/2)*(height/2)], sizeof(unsigned char)*(width/2)*(height/2), 1, input_fp);
+		fread(&icC.YCbCr.Crs[i*(width/2)*(height/2)], sizeof(unsigned char)*(width/2)*(height/2), 1, input_fp);
+	}
+	fclose(input_fp);
+
+    return SUCCESS;
+}
+
+/* initiation function*/
+int load_YUV(IcspCodec &icC, char* fname, const int nframe,  const int width, const int height)
+{
+	icC.YCbCr.nframe = nframe;
+	icC.YCbCr.width  = width;
+	icC.YCbCr.height = height;
+
+	/*char CIF_path[256] = "..\\CIF(352x288)";	
+	char CIF_fname[256];*/
+	
+	char CIF_path[256] = "data";
+	char CIF_fname[256];
+
+	sprintf(CIF_fname, "%s\\%s", CIF_path, fname);
+
+	FILE* input_fp;
+	input_fp = fopen(CIF_fname, "rb");
+	if(input_fp==NULL)
+	{
+		cout << "fail to load cif.yuv" << endl;
+		return -1;
+	}
+
+	icC.YCbCr.Ys  = (unsigned char*) malloc(sizeof(unsigned char)*width*height*nframe);
+	icC.YCbCr.Cbs = (unsigned char*) malloc(sizeof(unsigned char)*(width/2)*(height/2)*nframe);
+	icC.YCbCr.Crs = (unsigned char*) malloc(sizeof(unsigned char)*(width/2)*(height/2)*nframe);
+
+	if(icC.YCbCr.Ys == NULL || icC.YCbCr.Cbs == NULL || icC.YCbCr.Crs == NULL)
+	{
+		cout << "fail to malloc Ys, Cbs, Crs" << endl;
+		return -1;
+	}
+
+	for(int i=0; i<nframe; i++)
+	{
+		fread(&icC.YCbCr.Ys[i*width*height], sizeof(unsigned char)*height*width, 1, input_fp);
+		fread(&icC.YCbCr.Cbs[i*(width/2)*(height/2)], sizeof(unsigned char)*(width/2)*(height/2), 1, input_fp);
+		fread(&icC.YCbCr.Crs[i*(width/2)*(height/2)], sizeof(unsigned char)*(width/2)*(height/2), 1, input_fp);
+	}
+	fclose(input_fp);
+
+	return 0;
+}
+
 int init_entropy_calculator(int argc, char **argv)
 {
     if(!parse_command(argc, argv))
