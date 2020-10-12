@@ -38,6 +38,23 @@ typedef struct __ENTROPY_CALC__
     int *q_index_cr;
 
 } Entropy_calc;
+
+typedef struct __CMD_OPTIONS__
+{
+    char *input_fname;
+    int width;
+    int height;
+    int nframes;
+
+    int partition_blk_size;
+    int transform_blk_size;
+    int quantization_size;
+    int qstep_size;
+
+    // and so on zz
+
+}Cmd_options;
+
 // image structure
     // width
     // height
@@ -50,13 +67,9 @@ typedef struct __ENTROPY_CALC__
 
 // transform structure
     // transform size
-    // 
 
 // quantization structure
     // quantization size
-    // 
-
-
 
 // initialize
 int init_entropy_calculator(int argc, char **argv);
