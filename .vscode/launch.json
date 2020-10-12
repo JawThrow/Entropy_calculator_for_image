@@ -14,9 +14,7 @@
                 "-i",
                 "sample.raw",
                 "-w",
-                "720",
-                "-h",
-                "640"
+                "-h"
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
