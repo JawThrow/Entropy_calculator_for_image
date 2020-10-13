@@ -4,16 +4,18 @@
 
 int main(int argc, char* argv[])
 {
+    Entropy_calc ecalc;
     if(init_entropy_calculator(argc, argv) == FAILURE)
     {
-        exit(-1);
-    }
-    // Initialization
+        // Initialization
         // command loading
         // image loading
         // configuration
-    // image processing
         // partitioning
+        exit(-1);
+    }
+    
+    // image processing        
         // transform
         // quantization
 

@@ -72,7 +72,7 @@ typedef struct __CMD_OPTIONS__
     // quantization size
 
 // initialize
-int init_entropy_calculator(int argc, char **argv);
+int init_entropy_calculator(int argc, char **argv, Entropy_calc* ecalc);
 int load_image();
 int load_video();
 #endif

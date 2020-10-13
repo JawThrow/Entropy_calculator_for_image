@@ -162,6 +162,10 @@ static int alloc_image_mem(int width, int height, int nframes, int ntype)
     return SUCCESS;
 }
 
+static int load_YUV(Cmd_options* options)
+{
+    return SUCCESS;
+}
 /* initiation function */
 // int load_YUV(IcspCodec &icC, char* fname, const int nframe,  const int width, const int height)
 // {
@@ -206,13 +210,17 @@ static int alloc_image_mem(int width, int height, int nframes, int ntype)
 // 	return 0;
 // }
 
-int init_entropy_calculator(int argc, char **argv)
+int init_entropy_calculator(int argc, char **argv, Entropy_calc* ecalc)
 {
     Cmd_options temp_cmd;
     if(!parse_command(argc, argv, &temp_cmd))
     {
         exit(-1);
     }
-
+    
+    if(!load_YUV(&temp_cmd))
+    {
+        exit(-1);
+    }
     return SUCCESS;
 }
