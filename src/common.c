@@ -4,13 +4,13 @@
 // initialize
 static void init_cmd_options(Cmd_options* options)
 {
-    options->input_fname = NULL;
-    options->width  = -1;
-    options->height = -1;
-    options->nframes = -1;
+    options->input_fname        = NULL;
+    options->width              = -1;
+    options->height             = -1;
+    options->nframes            = -1;
     options->partition_blk_size = -1;
     options->transform_blk_size = -1;
-    options->qstep_size = -1;
+    options->qstep_size         = -1;
 }
 
 static int check_cmd(Cmd_options* options)
@@ -162,63 +162,62 @@ static int alloc_image_mem(int width, int height, int nframes, int ntype)
     return SUCCESS;
 }
 
-static int load_YUV(Cmd_options* options)
+static void set_entropy_calc_from_cmd(Cmd_options* options, Entropy_calc* ecalc)
 {
+    ecalc->height                = options->height;
+    ecalc->width                 = options->width;
+    ecalc->nframes               = options->nframes;
+    ecalc->partition_blk_size    = options->partition_blk_size;
+    ecalc->transform_blk_size    = options->transform_blk_size;
+    ecalc->quantization_blk_size = options->transform_blk_size;
+    ecalc->qstep_size            = options->qstep_size;
+}
+static int load_YUV(Cmd_options* options, Entropy_calc* ecalc)
+{
+    //char* yuv_fname = options->input_fname;
+    char* yuv_fname = "../data/news_cif(352X288)_300f.yuv";
+    FILE* input_fp = fopen(yuv_fname, "rb");
+    if(input_fp == NULL)    
+    {
+        printf("fail to load yuv!\n");
+        return FAILURE;
+    }
+
+    int width   = options->width;
+    int height  = options->height;
+    int nframes = options->nframes;
+    unsigned char* luma = (unsigned char*) malloc(sizeof(unsigned char)*width*height*nframes);
+    unsigned char* cb   = (unsigned char*) malloc(sizeof(unsigned char)*(width/2)*(height/2)*nframes);
+    unsigned char* cr   = (unsigned char*) malloc(sizeof(unsigned char)*(width/2)*(height/2)*nframes);
+
+	if(luma == NULL || cb == NULL || cr == NULL)
+	{
+		printf("fail to alloc memory for input yuv\n");
+		return FAILURE;
+	}
+
+	for(int i = 0; i < nframes; i++)
+	{
+		fread(&luma[i*width*height],       sizeof(unsigned char)*height*width,         1, input_fp);
+		fread(&cb[i*(width/2)*(height/2)], sizeof(unsigned char)*(width/2)*(height/2), 1, input_fp);
+		fread(&cr[i*(width/2)*(height/2)], sizeof(unsigned char)*(width/2)*(height/2), 1, input_fp);
+	}
+
+    fclose(input_fp);
     return SUCCESS;
 }
-/* initiation function */
-// int load_YUV(IcspCodec &icC, char* fname, const int nframe,  const int width, const int height)
-// {
-// 	icC.YCbCr.nframe = nframe;
-// 	icC.YCbCr.width  = width;
-// 	icC.YCbCr.height = height;
-
-// 	/*char CIF_path[256] = "..\\CIF(352x288)";	
-// 	char CIF_fname[256];*/
-	
-// 	char CIF_path[256] = "data";
-// 	char CIF_fname[256];
-
-// 	sprintf(CIF_fname, "%s\\%s", CIF_path, fname);
-
-// 	FILE* input_fp;
-// 	input_fp = fopen(CIF_fname, "rb");
-// 	if(input_fp==NULL)
-// 	{
-// 		cout << "fail to load cif.yuv" << endl;
-// 		return -1;
-// 	}
-
-// 	icC.YCbCr.Ys  = (unsigned char*) malloc(sizeof(unsigned char)*width*height*nframe);
-// 	icC.YCbCr.Cbs = (unsigned char*) malloc(sizeof(unsigned char)*(width/2)*(height/2)*nframe);
-// 	icC.YCbCr.Crs = (unsigned char*) malloc(sizeof(unsigned char)*(width/2)*(height/2)*nframe);
-
-// 	if(icC.YCbCr.Ys == NULL || icC.YCbCr.Cbs == NULL || icC.YCbCr.Crs == NULL)
-// 	{
-// 		cout << "fail to malloc Ys, Cbs, Crs" << endl;
-// 		return -1;
-// 	}
-
-// 	for(int i=0; i<nframe; i++)
-// 	{
-// 		fread(&icC.YCbCr.Ys[i*width*height], sizeof(unsigned char)*height*width, 1, input_fp);
-// 		fread(&icC.YCbCr.Cbs[i*(width/2)*(height/2)], sizeof(unsigned char)*(width/2)*(height/2), 1, input_fp);
-// 		fread(&icC.YCbCr.Crs[i*(width/2)*(height/2)], sizeof(unsigned char)*(width/2)*(height/2), 1, input_fp);
-// 	}
-// 	fclose(input_fp);
-
-// 	return 0;
-// }
 
 int init_entropy_calculator(int argc, char **argv, Entropy_calc* ecalc)
 {
-    Cmd_options temp_cmd;
+    Cmd_options temp_cmd;    
     if(!parse_command(argc, argv, &temp_cmd))
     {
         exit(-1);
     }
     
-    if(!load_YUV(&temp_cmd))
+    Entropy_calc temp_ecalc;
+    set_entropy_calc_from_cmd(&temp_cmd, &temp_ecalc);
+    if(!load_YUV(&temp_cmd, &temp_ecalc))
     {
         exit(-1);
     }

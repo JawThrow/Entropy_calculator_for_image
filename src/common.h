@@ -21,17 +21,17 @@ typedef struct __ENTROPY_CALC__
     unsigned char *img_cb;
     unsigned char *img_cr;
 
-    int partition_size;
+    int partition_blk_size;
     unsigned char **org_blk_luma;
     unsigned char **org_blk_cb;
     unsigned char **org_blk_cr;
 
-    int transform_size;
+    int transform_blk_size;
     double* t_coeff_luma;
     double* t_coeff_cb;
     double* t_coeff_cr;
 
-    int quantization_size;
+    int quantization_blk_size;
     int qstep_size;
     int *q_index_luma;
     int *q_index_cb;
