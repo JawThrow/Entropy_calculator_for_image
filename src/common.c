@@ -13,6 +13,17 @@ static void init_cmd_options(Cmd_options* options)
     options->qstep_size         = -1;
 }
 
+static void set_cmd_options_for_test(Cmd_options* options)
+{
+    options->input_fname        = "../data/news_cif(352X288)_300f.yuv";
+    options->width              = 352;
+    options->height             = 288;
+    options->nframes            = 1;
+    options->partition_blk_size = 16;
+    options->transform_blk_size = 16;
+    options->qstep_size         = 32;
+}
+
 static int check_cmd(Cmd_options* options)
 {
     int status = SUCCESS;
@@ -101,6 +112,7 @@ static int parse_command(int argc, char **argv, Cmd_options* options)
     Cmd_options temp_options;   
     init_cmd_options(&temp_options);
 
+    int debug_flag = 0;
     int n_cmd = argc;
     for (int i = 1; i < n_cmd; i++)
     {
@@ -135,18 +147,27 @@ static int parse_command(int argc, char **argv, Cmd_options* options)
             {
                 temp_options.qstep_size = atoi(argv[i+1]);
             }
-            else if (option[1] == 'h')
+            else if (option[1] == 'H')
             {
                 printf("help!\n");
             }
+            else if (option[1] == 'd')
+            {
+                printf("debug processing!\n");                
+                debug_flag = 1;
+            }
             else
             {
-                printf("%s is uncorrect option. please check list of supported command using -h.\n", option);
+                printf("%s is uncorrect option. please check list of supported command using -H.\n", option);
             }
         }
     }
 
-    if(!check_cmd(&temp_options))
+    if (debug_flag)
+    {
+        set_cmd_options_for_test(&temp_options);
+    }
+    else if (!check_cmd(&temp_options))
     {
         return FAILURE;
     }
@@ -174,8 +195,7 @@ static void set_entropy_calc_from_cmd(Cmd_options* options, Entropy_calc* ecalc)
 }
 static int load_YUV(Cmd_options* options, Entropy_calc* ecalc)
 {
-    //char* yuv_fname = options->input_fname;
-    char* yuv_fname = "../data/news_cif(352X288)_300f.yuv";
+    char* yuv_fname = options->input_fname;    
     FILE* input_fp = fopen(yuv_fname, "rb");
     if(input_fp == NULL)    
     {
@@ -221,5 +241,6 @@ int init_entropy_calculator(int argc, char **argv, Entropy_calc* ecalc)
     {
         exit(-1);
     }
+    
     return SUCCESS;
 }
