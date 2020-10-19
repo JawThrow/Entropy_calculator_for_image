@@ -10,7 +10,6 @@
 #define SUCCESS TRUE
 #define FAILURE FALSE
 
-// file structure?
 typedef struct __ENTROPY_CALC__
 {
     int width;

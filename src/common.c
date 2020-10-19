@@ -223,6 +223,10 @@ static int load_YUV(Cmd_options* options, Entropy_calc* ecalc)
 		fread(&cr[i*(width/2)*(height/2)], sizeof(unsigned char)*(width/2)*(height/2), 1, input_fp);
 	}
 
+    ecalc->img_luma = luma;
+    ecalc->img_cb   = cb;
+    ecalc->img_cr   = cr;
+
     fclose(input_fp);
     return SUCCESS;
 }
@@ -241,6 +245,11 @@ int init_entropy_calculator(int argc, char **argv, Entropy_calc* ecalc)
     {
         exit(-1);
     }
-    
+
+    // partitioning
+    // n_width_blk  = width  / partition_blk_size;
+    // n_height_blk = height / partition_blk_size;
+    // crop from left(0) to right(n_width_blk  * parition_blk_size)
+    //      from top(0) to bottom(n_height_blk * partition_blk_size)
     return SUCCESS;
 }
