@@ -11,13 +11,10 @@
             "program": "${workspaceFolder}/bin/entropy_calculator",
             "args": 
             [
-                "-i",
-                "sample.raw",
-                "-w",
-                "-h"
+                "-d"
             ],
             "stopAtEntry": false,
-            "cwd": "${workspaceFolder}",
+            "cwd": "${workspaceFolder}/bin",
             "environment": [],
             "externalConsole": false,
             "MIMode": "gdb",

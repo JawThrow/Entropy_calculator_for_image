@@ -1,6 +1,5 @@
 #include "common.h"
 
-
 // initialize
 static void init_cmd_options(Cmd_options* options)
 {
@@ -223,6 +222,7 @@ static int load_YUV(Cmd_options* options, Entropy_calc* ecalc)
 		fread(&cr[i*(width/2)*(height/2)], sizeof(unsigned char)*(width/2)*(height/2), 1, input_fp);
 	}
 
+    // [FIXME]: fix code more safety
     ecalc->img_luma = luma;
     ecalc->img_cb   = cb;
     ecalc->img_cr   = cr;
@@ -230,26 +230,44 @@ static int load_YUV(Cmd_options* options, Entropy_calc* ecalc)
     fclose(input_fp);
     return SUCCESS;
 }
+static int partition_YUV(Entropy_calc* ecalc)
+{
+    // partitioning
+    // crop from left(0) to right(n_width_blk  * parition_blk_size)
+    //      from top(0) to bottom(n_height_blk * partition_blk_size)
+    int partition_blk_size = ecalc->partition_blk_size;
+    int width              = ecalc->width;
+    int height             = ecalc->height;
+    int n_width_blk        = width / partition_blk_size;
+    int n_height_blk       = height / partition_blk_size;
+    
+    for (int x = 0; x < n_width_blk; x++)
+    {
+        // 어떡해야하나, block8, block16, block32... 구조체 없이 메모리 할당하는 방법이 있을까?...
+    }
 
+    ecalc->n_blk_width  = n_width_blk;
+    ecalc->n_blk_height = n_height_blk;    
+    return SUCCESS;
+}
 int init_entropy_calculator(int argc, char **argv, Entropy_calc* ecalc)
 {
-    Cmd_options temp_cmd;    
+    Cmd_options temp_cmd;
     if(!parse_command(argc, argv, &temp_cmd))
     {
         exit(-1);
     }
     
-    Entropy_calc temp_ecalc;
-    set_entropy_calc_from_cmd(&temp_cmd, &temp_ecalc);
-    if(!load_YUV(&temp_cmd, &temp_ecalc))
+    Entropy_calc *temp_ecalc = (Entropy_calc *)malloc(sizeof(Entropy_calc));
+    set_entropy_calc_from_cmd(&temp_cmd, temp_ecalc);
+    if(!load_YUV(&temp_cmd, temp_ecalc))
     {
         exit(-1);
     }
-
-    // partitioning
-    // n_width_blk  = width  / partition_blk_size;
-    // n_height_blk = height / partition_blk_size;
-    // crop from left(0) to right(n_width_blk  * parition_blk_size)
-    //      from top(0) to bottom(n_height_blk * partition_blk_size)
+    
+    if(!partition_YUV(temp_ecalc))
+    {
+        exit(-1);
+    }
     return SUCCESS;
 }

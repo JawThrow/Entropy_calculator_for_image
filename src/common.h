@@ -15,6 +15,8 @@ typedef struct __ENTROPY_CALC__
     int width;
     int height;
     int nframes;
+    int n_blk_width;
+    int n_blk_height;
     
     unsigned char *img_luma;
     unsigned char *img_cb;
